@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
+from micromlgen import port
 
 # Creates trainning data to pass into the random forest
 # Not a specfic csv file as it would just add unneeded size
@@ -35,6 +36,7 @@ def create_random_forest(training_data):
     
     #No hyper parameters
     # rf = RandomForestClassifier()
+
     rf.fit(X_train, y_train)
     y_pred = rf.predict(X_test)
 
@@ -44,17 +46,11 @@ def create_random_forest(training_data):
 
     print(classification_report(y_test, y_pred))
 
-    n_nodes = [estimator.tree_.node_count for estimator in rf.estimators_]
-    max_depths = [estimator.tree_.max_depth for estimator in rf.estimators_]
-
-    print(f"Number of trees: {len(rf.estimators_)}")
-    print(f"Average nodes per tree: {np.mean(n_nodes):.1f}")
-    print(f"Average depth per tree: {np.mean(max_depths):.1f}")
-    print(f"Total nodes: {np.sum(n_nodes)}")
-
-    total_nodes = np.sum([est.tree_.node_count for est in rf.estimators_])
-    model_size_bytes = total_nodes * 28
-    print(f"Estimated model size: {model_size_bytes/1024:.2f} KB")
+    #convert and save c code
+    classmap = {i: str(c) for i, c in enumerate(rf.classes_)}
+    c_code = port(rf, classmap=classmap)
+    with open("./C Code/model.h", "w") as f:
+        f.write(c_code)
 
 
 training_data = create_training_data()
