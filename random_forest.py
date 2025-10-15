@@ -49,6 +49,8 @@ def create_random_forest(training_data):
     #convert and save c code
     classmap = {i: str(c) for i, c in enumerate(rf.classes_)}
     c_code = port(rf, classmap=classmap)
+    print(f"Header file size: {len(c_code)/1024:.2f} KB")
+
     with open("./C Code/model.h", "w") as f:
         f.write(c_code)
 
