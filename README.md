@@ -1,4 +1,4 @@
-# 🛠️ Predictive Pump Maintenance  
+# Predictive Pump Maintenance  
 **Author:** Auron Walker  
 **Date:** October 2025  
 
